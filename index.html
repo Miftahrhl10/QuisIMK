@@ -7,10 +7,13 @@
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+      background: linear-gradient(180deg, #6dd5ed 0%, #2193b0 100%);
+      background-size: 100% 100%;
+      min-height: 100vh;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
     }
     .quiz-container {
       background: #fff;
@@ -212,17 +215,114 @@
     @media (max-width: 600px) {
       .quiz-container { padding: 18px 5px 20px 5px; }
       .option-btn { font-size: 1em; padding: 16px 0; }
-      .leaderboard { padding: 12px 5px 5px 5px; }
+    }
+    .cloud {
+      position: absolute;
+      top: 10%;
+      left: -200px;
+      width: 180px;
+      height: 60px;
+      background: #fff;
+      border-radius: 60px;
+      opacity: 0.7;
+      box-shadow: 60px 0 0 0 #fff, 120px 10px 0 0 #fff, 90px -10px 0 0 #fff;
+      animation: cloudMove 40s linear infinite;
+      z-index: 0;
+    }
+    .cloud2 {
+      top: 25%;
+      left: -250px;
+      width: 120px;
+      height: 40px;
+      opacity: 0.5;
+      box-shadow: 40px 0 0 0 #fff, 80px 10px 0 0 #fff, 60px -10px 0 0 #fff;
+      animation-duration: 60s;
+    }
+    .cloud3 {
+      top: 40%;
+      left: -180px;
+      width: 100px;
+      height: 30px;
+      opacity: 0.4;
+      box-shadow: 30px 0 0 0 #fff, 60px 10px 0 0 #fff, 45px -10px 0 0 #fff;
+      animation-duration: 50s;
+    }
+    @keyframes cloudMove {
+      0% { left: -200px; }
+      100% { left: 110vw; }
+    }
+    .ocean {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 40vh;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .wave {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 200vw;
+      height: 120px;
+      background: 
+        radial-gradient(ellipse at 50% 60%, #b3e0ff 60%, transparent 100%),
+        linear-gradient(180deg, #2193b0 60%, #185a9d 100%);
+      opacity: 0.85;
+      border-radius: 43% 57% 60% 40% / 60% 60% 40% 40%;
+      animation: waveMove 8s linear infinite;
+      filter: blur(0.5px) brightness(1.1);
+    }
+    .wave.wave2 {
+      height: 100px;
+      opacity: 0.5;
+      background: 
+        radial-gradient(ellipse at 60% 70%, #6dd5ed 60%, transparent 100%),
+        linear-gradient(180deg, #43cea2 60%, #2193b0 100%);
+      animation: waveMove2 12s linear infinite;
+      bottom: 30px;
+      filter: blur(1.2px) brightness(1.05);
+    }
+    .wave.wave3 {
+      height: 80px;
+      opacity: 0.3;
+      background: 
+        radial-gradient(ellipse at 40% 80%, #fff 40%, transparent 100%),
+        linear-gradient(180deg, #6dd5ed 60%, #43cea2 100%);
+      animation: waveMove3 16s linear infinite;
+      bottom: 60px;
+      filter: blur(2px) brightness(1.1);
+    }
+    @keyframes waveMove {
+      0% { transform: translateX(0) scaleY(1);}
+      50% { transform: translateX(-25vw) scaleY(1.08);}
+      100% { transform: translateX(-50vw) scaleY(1);}
+    }
+    @keyframes waveMove2 {
+      0% { transform: translateX(0) scaleY(1);}
+      50% { transform: translateX(-15vw) scaleY(1.04);}
+      100% { transform: translateX(-30vw) scaleY(1);}
+    }
+    @keyframes waveMove3 {
+      0% { transform: translateX(0) scaleY(1);}
+      50% { transform: translateX(-10vw) scaleY(1.02);}
+      100% { transform: translateX(-20vw) scaleY(1);}
     }
   </style>
 </head>
 <body>
+  <div class="cloud"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+  <div class="ocean">
+    <div class="wave"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+  </div>
   <div class="quiz-container">
     <div id="startScreen" class="start-screen">
       <h2>Quiz Interaksi Manusia dan Komputer</h2>
       <input type="text" id="playerName" placeholder="Masukkan Nama Anda" maxlength="20" autocomplete="off"><br>
       <button class="next-btn show" onclick="startQuiz()">Mulai Quiz</button>
-      <div class="leaderboard" id="leaderboard"></div>
     </div>
     <div id="quizScreen" style="display:none;">
       <h2 id="quizTitle">Quiz Interaksi Manusia dan Komputer</h2>
@@ -236,7 +336,15 @@
       <div id="result"></div>
       <button id="nextBtn" class="next-btn" onclick="nextStep()">Lanjut</button>
     </div>
+    <div class="leaderboard" id="leaderboard">
+      <h3>Leaderboard</h3>
+      <ul id="leaderboardList"></ul>
+      <button id="resetLeaderboardBtn" style="margin:16px auto 0 auto;display:block;background:#ff7675;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:bold;cursor:pointer;">Reset Leaderboard</button>
+    </div>
   </div>
+  <audio id="bgm" src="sound.mp3" loop></audio>
+  <audio id="motivasiSound" src="motivasi.mp3"></audio>
+  <button id="playMusic" style="position:fixed;top:20px;right:20px;z-index:99;">🔊</button>
   <script>
 const questions = [
   {
@@ -297,21 +405,7 @@ let answered = false;
 let playerName = "";
 let timer = null;
 let timeLeft = 15;
-
-function showLeaderboard() {
-  let data = JSON.parse(localStorage.getItem("quiz_leaderboard") || "[]");
-  data.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
-  let html = "<h3>Leaderboard</h3><ol>";
-  if (data.length === 0) {
-    html += "<li>Belum ada skor</li>";
-  } else {
-    data.slice(0, 10).forEach((item, idx) => {
-      html += `<li>${idx+1}. ${item.name} <span class="score">${item.score}</span></li>`;
-    });
-  }
-  html += "</ol>";
-  document.getElementById("leaderboard").innerHTML = html;
-}
+let points = 0;
 
 function startQuiz() {
   playerName = document.getElementById("playerName").value.trim();
@@ -321,9 +415,13 @@ function startQuiz() {
   }
   current = 0;
   score = 0;
+  points = 0;
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("quizScreen").style.display = "block";
+  document.getElementById("leaderboard").style.display = "none"; // Sembunyikan leaderboard
   showQuestion(current);
+  document.getElementById('bgm').currentTime = 0;
+  document.getElementById('bgm').play();
 }
 
 function showQuestion(idx) {
@@ -370,7 +468,22 @@ function selectOption(selected, btn) {
     if (i === q.answer) b.classList.add('correct');
     if (i === selected && i !== q.answer) b.classList.add('wrong');
   });
-  if (selected === q.answer) score++;
+  let pointThis = 0;
+  if (selected === q.answer) {
+    pointThis = Math.max(1, Math.round((timeLeft / 15) * 20));
+    score += pointThis;
+  }
+  points += pointThis;
+  // Tampilkan info poin pada soal
+  const info = document.createElement('div');
+  info.style.textAlign = "center";
+  info.style.margin = "10px 0";
+  info.style.fontWeight = "bold";
+  info.style.color = "#185a9d";
+  info.innerHTML = selected === q.answer
+    ? `Benar! +${pointThis} poin`
+    : `Salah! +0 poin`;
+  document.getElementById('quizStep').appendChild(info);
   document.getElementById('nextBtn').classList.add("show");
 }
 
@@ -384,6 +497,14 @@ function autoNext() {
     b.classList.add('disabled');
     if (i === q.answer) b.classList.add('correct');
   });
+  // Info waktu habis
+  const info = document.createElement('div');
+  info.style.textAlign = "center";
+  info.style.margin = "10px 0";
+  info.style.fontWeight = "bold";
+  info.style.color = "#ff7675";
+  info.innerHTML = "Waktu habis! +0 poin";
+  document.getElementById('quizStep').appendChild(info);
   document.getElementById('nextBtn').classList.add("show");
 }
 
@@ -402,32 +523,43 @@ function nextStep() {
 function showResult() {
   clearInterval(timer);
   document.getElementById('timer').style.display = "none";
+  document.getElementById('bgm').pause();
+  document.getElementById('bgm').currentTime = 0;
+
+  // Play sound motivasi
+  const motivasiAudio = document.getElementById('motivasiSound');
+  motivasiAudio.currentTime = 0;
+  motivasiAudio.play();
+
   let message = "";
-  if (score === questions.length) {
-    message = "🌟 Luar biasa! Semua jawaban benar 🎉";
-  } else if (score >= 3) {
+  const motivasi = [
+    "Tetap semangat belajar! 🚀",
+    "Kamu hebat, terus tingkatkan!",
+    "Jangan menyerah, coba lagi ya!",
+    "Luar biasa! Terus asah kemampuanmu!",
+    "Belajar itu menyenangkan, kan?"
+  ];
+  message = motivasi[Math.floor(Math.random() * motivasi.length)];
+  if (score === questions.length * 20) {
+    message = "🌟 Sempurna! Semua jawaban benar dan cepat! 🎉";
+  } else if (score >= questions.length * 10) {
     message = "👍 Bagus! Terus tingkatkan pengetahuanmu!";
   } else {
-    message = "💡 Jangan menyerah, coba lagi ya!";
+    message = "💡 " + message;
   }
   document.getElementById('quizStep').innerHTML = "";
   const result = document.getElementById('result');
   result.innerHTML = `<div>
-    <div style="font-size:1.1em;margin-bottom:8px;">${playerName}, skor Anda:</div>
-    <span style='font-size:1.6em;font-weight:bold;'>${score}</span> dari ${questions.length}<br>${message}
+    <div style="font-size:1.1em;margin-bottom:8px;">${playerName}, total poin Anda:</div>
+    <span style='font-size:1.6em;font-weight:bold;'>${score}</span> dari ${questions.length * 20} poin<br>${message}
     <br><button class="next-btn show" onclick="restartQuiz()">Ulangi Quiz</button>
     </div>`;
   result.style.display = "block";
   result.className = "show";
+  window.scrollTo({ top: result.offsetTop - 50, behavior: 'smooth' });
   saveToLeaderboard(playerName, score);
   showLeaderboard();
-  window.scrollTo({ top: result.offsetTop - 50, behavior: 'smooth' });
-}
-
-function saveToLeaderboard(name, score) {
-  let data = JSON.parse(localStorage.getItem("quiz_leaderboard") || "[]");
-  data.push({ name, score });
-  localStorage.setItem("quiz_leaderboard", JSON.stringify(data));
+  document.getElementById("leaderboard").style.display = "block";
 }
 
 function restartQuiz() {
@@ -438,11 +570,63 @@ function restartQuiz() {
   document.getElementById('result').style.display = "none";
   document.getElementById('progress').style.width = "0";
   document.getElementById('timer').style.display = "none";
+  score = 0;
+  points = 0;
+  document.getElementById('bgm').pause();
+  document.getElementById('bgm').currentTime = 0;
+  document.getElementById("leaderboard").style.display = "block"; // Tampilkan leaderboard
   showLeaderboard();
 }
 
+
+
 // Tampilkan leaderboard saat halaman dibuka
 showLeaderboard();
+document.getElementById("leaderboard").style.display = "block";
+
+function saveToLeaderboard(name, score) {
+  let scores = JSON.parse(localStorage.getItem('quizScores')) || [];
+  scores.push({ name, score });
+  scores.sort((a, b) => b.score - a.score);
+  scores = scores.slice(0, 10);
+  localStorage.setItem('quizScores', JSON.stringify(scores));
+}
+
+function showLeaderboard() {
+  const leaderboardList = document.getElementById('leaderboardList');
+  leaderboardList.innerHTML = "";
+  const scores = JSON.parse(localStorage.getItem('quizScores')) || [];
+  if (scores.length === 0) {
+    leaderboardList.innerHTML = "<li>Belum ada skor</li>";
+    return;
+  }
+  scores.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${i + 1}. ${s.name}</span> <span class="score">${s.score} poin</span>`;
+    leaderboardList.appendChild(li);
+  });
+}
+
+// Musik langsung play saat halaman dibuka (jika diizinkan browser)
+window.addEventListener('DOMContentLoaded', function() {
+  const bgm = document.getElementById('bgm');
+  bgm.volume = 0.5;
+  bgm.play().catch(() => {});
+});
+
+// Kontrol musik dengan tombol
+document.getElementById('playMusic').onclick = function() {
+  const bgm = document.getElementById('bgm');
+  bgm.muted = false;
+  bgm.play();
+};
+
+document.getElementById('resetLeaderboardBtn').onclick = function() {
+  if (confirm('Apakah Anda yakin ingin menghapus semua data leaderboard?')) {
+    localStorage.removeItem('quizScores');
+    showLeaderboard();
+  }
+};
   </script>
 </body>
 </html>
